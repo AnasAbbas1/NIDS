@@ -43,14 +43,14 @@ private:
     }
     void WriteData(char* data) {
         ofstream myfile;
-        myfile.open("outputfiles\\data.txt");
+        myfile.open("outputfiles/data.txt");
         myfile << string(data);
         myfile.close();
     }
     void WritePatterns(char * patterns) {
         set<string>st;
         ofstream myfile;
-        myfile.open("outputfiles\\patterns.txt");
+        myfile.open("outputfiles/patterns.txt");
         for (int patternIndex = 0; patternIndex < p; patternIndex++) {
             string pattern = "";
             for (int i = patternIndex * m; i < patternIndex * m + m; i++)
@@ -122,7 +122,7 @@ public:
         WriteData(h_data);
         WritePatterns(h_patterns);
         SolveOnCPU();
-        WriteMatches(expectedMatches, "outputfiles\\Expected.txt");
+        WriteMatches(expectedMatches, "outputfiles/Expected.txt");
     }
 
     void WriteActual(int* h_output) {
@@ -133,7 +133,7 @@ public:
             }
         }
         sort(gpuMatches.begin(), gpuMatches.end());
-        WriteMatches(gpuMatches, "outputfiles\\Actual.txt");
+        WriteMatches(gpuMatches, "outputfiles/Actual.txt");
         bool same = true;
         if (gpuMatches.size() != expectedMatches.size()) {
             cout << "sizes are not equal expected size is " << expectedMatches.size() << " and actual size is " << gpuMatches.size() << endl;
