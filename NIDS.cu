@@ -122,6 +122,14 @@ private:
         for (int i = 0; i < p; i++) 
             FindPattern(i);
     }
+    void CopyDataToDevice(){
+        CubDebugExit(g_allocator.DeviceAllocate((void**)&d_data, sizeof(char) * n));
+        CubDebugExit(cudaMemcpy(d_data, h_data, sizeof(char) * n, cudaMemcpyHostToDevice));
+        CubDebugExit(g_allocator.DeviceAllocate((void**)d_patterns, sizeof(char) * p * m));
+        CubDebugExit(cudaMemcpy(d_patterns, h_patterns, sizeof(char) * p * m, cudaMemcpyHostToDevice));
+        delete[] h_patterns;
+        delete[] h_data;
+    }
 public:
     char* h_data;
     char* h_patterns;
@@ -133,6 +141,7 @@ public:
         WritePatterns(h_patterns);
         SolveOnCPU();
         WriteMatches(expectedMatches, "outputfiles\\Expected.txt");
+        CopyDataToDevice();
     }
 
     void Validate(int* h_output) {
@@ -346,17 +355,8 @@ private:
         cudaFree(d_hashTable);
         return h_output;
     }
-    static void CopyDataToDevice(){
-        CubDebugExit(g_allocator.DeviceAllocate((void**)&test.d_data, sizeof(char) * n));
-        CubDebugExit(cudaMemcpy(test.d_data, test.h_data, sizeof(char) * n, cudaMemcpyHostToDevice));
-        CubDebugExit(g_allocator.DeviceAllocate((void**)&test.d_patterns, sizeof(char) * p * m));
-        CubDebugExit(cudaMemcpy(test.d_patterns, test.h_patterns, sizeof(char) * p * m, cudaMemcpyHostToDevice));
-        delete[] test.h_patterns;
-        delete[] test.h_data;
-    }
 public:
     static int* Execute() {
-        CopyDataToDevice();
         //1.Load a preprocessed lookup table for di mod q (0 ≤ i ≤ q − 1)
         int* d_lookupTable = Step1();
         //2. Compute the values of h(Pk) for all k (0 ≤ k ≤ p − 1) in parallel and create the hash table HT using the calculated values.
@@ -452,14 +452,6 @@ private:
         cudaFree(d_hashTable);
         cudaFree(d_patternHashes);
         return h_output;
-    }
-    static void CopyDataToDevice(){
-        CubDebugExit(g_allocator.DeviceAllocate((void**)&test.d_data, sizeof(char) * n));
-        CubDebugExit(cudaMemcpy(test.d_data, test.h_data, sizeof(char) * n, cudaMemcpyHostToDevice));
-        CubDebugExit(g_allocator.DeviceAllocate((void**)&test.d_patterns, sizeof(char) * p * m));
-        CubDebugExit(cudaMemcpy(test.d_patterns, test.h_patterns, sizeof(char) * p * m, cudaMemcpyHostToDevice));
-        delete[] test.h_patterns;
-        delete[] test.h_data;
     }
 public:
     static int* Execute() {
