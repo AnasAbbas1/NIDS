@@ -26,8 +26,6 @@ const ull h_n = 1 << 18;
 const ull h_m = 13;
 const ull h_mps[] = {7, 31, 127, 8191, 131071, 524287};
 const int h_masksz = 6;
-const ull h_masks[] = {7, 248, 32512, 268402688, 35184103653376ull, 18446708889337462784ull};
-const ull h_nmasks[] = {18446744073709551608ull, 18446744073709551367ull, 18446744073709519103ull, 18446744073441148927ull, 18446708889605898239ull, 35184372088831ull};
 const ull h_shifts[] = {3, 5, 7, 13, 17, 19};
 const ull h_cumShifts[] = {0, 3, 8, 15, 28, 45};
 const ull h_ds[] = {2, 3, 5, 11, 13, 17};
@@ -44,7 +42,6 @@ __constant__ const ull d_nmasks[] = {18446744073709551608ull, 184467440737095513
 __constant__ const ull d_shifts[] = {3, 5, 7, 13, 17, 19};
 __constant__ const ull d_cumShifts[] = {0, 3, 8, 15, 28, 45};
 __constant__ const ull d_ds[] = {2, 3, 5, 11, 13, 17};
-__constant__ const ull d_HTSZ = 1 << 18;
 __constant__ const ull d_HTMSK = h_HTSZ - 1;
 struct testcase {
 private:
@@ -75,7 +72,7 @@ private:
         myfile.open("outputfiles\\patterns.txt");
         for (int patternIndex = 0; patternIndex < h_p; patternIndex++) {
             string pattern = "";
-            for (int i = patternIndex * m; i < patternIndex * h_m + h_m; i++)
+            for (int i = patternIndex * h_m; i < patternIndex * h_m + h_m; i++)
                 pattern += h_patterns[i];
             st.insert(pattern);
             myfile << patternIndex << ": " << pattern << endl;
@@ -284,7 +281,7 @@ __global__ void FindMatchesNew(ull* d_prefixSum, ull* d_lookupTable, int* d_cont
                 tmp = tmp + d_mps[k] - ((d_prefixSum[j - 1] & d_masks[k]) >> d_cumShifts[k]);
                 tmp = (tmp >= d_mps[k] ? tmp - d_mps[k] : tmp);
             }
-            tmp = tmp * (d_lookupTable[(d_m + ((d_n - j + mps[k] - 2ll) / (d_mps[k] - 1ll)) * (d_mps[k] - 1ll) - d_n + j) % (d_mps[k] - 1ll)] >> d_cumShifts[k]) ;
+            tmp = tmp * (d_lookupTable[(d_m + ((d_n - j + d_mps[k] - 2ll) / (d_mps[k] - 1ll)) * (d_mps[k] - 1ll) - d_n + j) % (d_mps[k] - 1ll)] >> d_cumShifts[k]) ;
             tmp = (tmp & d_mps[k]) + (tmp >> d_shifts[k]);
             hash |= (tmp >= d_mps[k] ? tmp - d_mps[k] : tmp) << d_cumShifts[k]; 
         }
