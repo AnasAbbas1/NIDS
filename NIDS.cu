@@ -161,8 +161,6 @@ public:
         else {
             cout << "Results doesn't match, debug your code" << endl;
         }
-        cout << "Enter any key to exit" << endl;
-        getchar();
     }
 
 }test;
