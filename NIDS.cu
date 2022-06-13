@@ -365,7 +365,7 @@ private:
     }
 public:
     static int* Execute() {
-        CopyDataToDevice()
+        CopyDataToDevice();
         //1.Load a preprocessed lookup table for di mod q (0 ≤ i ≤ q − 1)
         int* d_lookupTable = Step1();
         //2. Compute the values of h(Pk) for all k (0 ≤ k ≤ p − 1) in parallel and create the hash table HT using the calculated values.
