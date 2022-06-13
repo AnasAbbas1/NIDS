@@ -194,11 +194,11 @@ struct CustomSumNew
     CUB_RUNTIME_FUNCTION __host__ __device__ __forceinline__
         ull operator()(const ull& a, const ull& b) const {
             ull ans = 0;
-            for(int j = 0; j < d_masksz; j++){
-                ull sum = ((a & d_masks[j]) >> d_cumShifts[j]) + ((b & d_masks[j]) >> d_cumShifts[j]);
-                sum = (sum & d_mps[j]) + (sum >> d_shifts[j]);
-                sum = sum >= d_mps[j] ? sum - d_mps[j] : sum;
-                ans |= sum << d_cumShifts[j];
+            for(int j = 0; j < h_masksz; j++){
+                ull sum = ((a & h_masks[j]) >> h_cumShifts[j]) + ((b & h_masks[j]) >> h_cumShifts[j]);
+                sum = (sum & h_mps[j]) + (sum >> h_shifts[j]);
+                sum = sum >= h_mps[j] ? sum - h_mps[j] : sum;
+                ans |= sum << h_cumShifts[j];
             }
         return ans;
     }
