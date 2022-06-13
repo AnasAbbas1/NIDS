@@ -32,11 +32,9 @@ const ull h_shifts[] = {3, 5, 7, 13, 17, 19};
 const ull h_cumShifts[] = {0, 3, 8, 15, 28, 45};
 const ull h_ds[] = {2, 3, 5, 11, 13, 17};
 const ull h_HTSZ = 1 << 18;
-const ull h_HTMSK = HTSZ - 1;
 const int h_d = 2;
 __constant__ const int d_d = 2;
 __constant__ const ull d_q = 65521;
-__constant__ const int d_p = 1024;
 __constant__ const ull d_n = 1 << 18;
 __constant__ const ull d_m = 13;
 __constant__ const ull d_mps[] = {7, 31, 127, 8191, 131071, 524287};
@@ -77,7 +75,7 @@ private:
         myfile.open("outputfiles\\patterns.txt");
         for (int patternIndex = 0; patternIndex < h_p; patternIndex++) {
             string pattern = "";
-            for (int i = patternIndex * m; i < patternIndex * m + m; i++)
+            for (int i = patternIndex * m; i < patternIndex * h_m + h_m; i++)
                 pattern += h_patterns[i];
             st.insert(pattern);
             myfile << patternIndex << ": " << pattern << endl;
@@ -100,13 +98,13 @@ private:
     char * PatternsGeneration(){
         set<string>st;
         while(st.size() != h_p){
-            char * ptrn = StringGeneration(m);
+            char * ptrn = StringGeneration(h_m);
             st.insert(string(ptrn));
         }
         char * ret = new char[h_p * h_m + 1];
         ret[h_p * h_m] = 0;
         while(st.size()){
-            for(int i = 0; i < m; i++){
+            for(int i = 0; i < h_m; i++){
                 ret[h_m * (h_p - st.size()) + i] = (*st.begin())[i];
             }
             st.erase(st.begin());
@@ -121,7 +119,7 @@ private:
     }
     void FindPattern(int patternIndex) {
         string pattern = "";
-        for (int i = patternIndex * m; i < patternIndex * h_m + h_m; i++)
+        for (int i = patternIndex * h_m; i < patternIndex * h_m + h_m; i++)
             pattern += h_patterns[i];
 
         size_t pos = input_str.find(pattern);
@@ -224,7 +222,7 @@ __global__ void CalculateHashPatternNew(char* d_patterns, int* d_controlArray, i
     ull patternHash = 0;
 
     for (int i = patternIndex * d_m; i < patternIndex * d_m + d_m; i++){
-        for(int j = 0; j < masksz; j++){
+        for(int j = 0; j < d_masksz; j++){
             ull hash = (patternHash & d_masks[j]) >> d_cumShifts[j];
             hash = hash * d_ds[j] + (ull)(d_patterns[i] - 'a' + 1);
             hash = (hash & d_mps[j]) + (hash >> d_shifts[j]);
@@ -257,12 +255,12 @@ __global__ void CalculateHashesNew(ull* d_a, char* d_data, ull* d_lookupTable) {
 }
 __global__ void FindMatches(int* d_prefixSum, char* d_data, char* d_patterns, int* d_lookupTable, int* d_controlArray, int* d_hashTable, int* d_output) {
     ull j = blockIdx.x * blockDim.x + threadIdx.x;
-    if (j + d_m - 1 <= n) {
+    if (j + d_m - 1 <= d_n) {
         int hash = ((((ull)(d_prefixSum[j + d_m - 1] - (j ? d_prefixSum[j - 1] : 0)) + d_q) % d_q) * (ull)d_lookupTable[(d_m + ((d_n - j + d_q - 2ll) / (d_q - 1ll)) * (d_q - 1ll) - d_n + j) % (d_q - 1ll)]) % d_q;
         while (d_controlArray[hash]) {
             int patternIndex = d_hashTable[hash];
             bool match = true;
-            for (int i = patternIndex * m, offset = 0; i < patternIndex * d_m + d_m; i++, offset++) {
+            for (int i = patternIndex * d_m, offset = 0; i < patternIndex * d_m + d_m; i++, offset++) {
                 if (d_patterns[i] != d_data[j + offset]) {
                     match = false;
                     break;
@@ -278,7 +276,7 @@ __global__ void FindMatches(int* d_prefixSum, char* d_data, char* d_patterns, in
 }
 __global__ void FindMatchesNew(ull* d_prefixSum, ull* d_lookupTable, int* d_controlArray, int* d_hashTable, int* d_output, ull* d_patternHashes) {
     ull j = blockIdx.x * blockDim.x + threadIdx.x;
-    if (j + d_m - 1 <= n) {
+    if (j + d_m - 1 <= d_n) {
         ull hash = 0;
         for(int k = 0; k < d_masksz; k++){
             ull tmp = (d_prefixSum[j + d_m - 1] & d_masks[k]) >> d_cumShifts[k];
@@ -286,14 +284,14 @@ __global__ void FindMatchesNew(ull* d_prefixSum, ull* d_lookupTable, int* d_cont
                 tmp = tmp + d_mps[k] - ((d_prefixSum[j - 1] & d_masks[k]) >> d_cumShifts[k]);
                 tmp = (tmp >= d_mps[k] ? tmp - d_mps[k] : tmp);
             }
-            tmp = tmp * (d_lookupTable[(d_m + ((d_n - j + mps[k] - 2ll) / (d_mps[k] - 1ll)) * (d_mps[k] - 1ll) - n + j) % (d_mps[k] - 1ll)] >> d_cumShifts[k]) ;
+            tmp = tmp * (d_lookupTable[(d_m + ((d_n - j + mps[k] - 2ll) / (d_mps[k] - 1ll)) * (d_mps[k] - 1ll) - d_n + j) % (d_mps[k] - 1ll)] >> d_cumShifts[k]) ;
             tmp = (tmp & d_mps[k]) + (tmp >> d_shifts[k]);
             hash |= (tmp >= d_mps[k] ? tmp - d_mps[k] : tmp) << d_cumShifts[k]; 
         }
         
         while (d_controlArray[hash & d_HTMSK]) {
             if (hash == d_patternHashes[d_hashTable[hash & d_HTMSK]]) {
-                d_output[j] = d_hashTable[hash & HTMSK];
+                d_output[j] = d_hashTable[hash & d_HTMSK];
                 return;
             }
             hash = (hash == d_HTMSK) ? 0: hash + 1;
@@ -314,7 +312,7 @@ private:
         return ret;
     }
     static pair<int*, int*> Step2(char * d_patterns) {
-        int* d_controlArray = NULL, * d_hashTable = NULL,* h_controlArray = new int[q],* h_hashTable = new int [q];
+        int* d_controlArray = NULL, * d_hashTable = NULL, * h_controlArray = new int[h_q], * h_hashTable = new int[h_q];
         for (int i = 0; i < h_q; i++) {
             h_controlArray[i] = 0;
             h_hashTable[i] = -1;
@@ -358,7 +356,7 @@ private:
         CubDebugExit(g_allocator.DeviceAllocate((void**)&d_output, sizeof(int) * h_n));
         CubDebugExit(cudaMemcpy(d_output, h_output, sizeof(int) * h_n, cudaMemcpyHostToDevice));
         cudaDeviceSynchronize();
-        FindMatches << <n / 256, 256 >> > (d_prefixSum, d_data, d_patterns, d_lookupTable, d_controlArray, d_hashTable, d_output);
+        FindMatches << <h_n / 256, 256 >> > (d_prefixSum, d_data, d_patterns, d_lookupTable, d_controlArray, d_hashTable, d_output);
         CubDebugExit(cudaMemcpy(h_output, d_output, sizeof(int) * h_n, cudaMemcpyDeviceToHost));
         cudaFree(d_output);
         cudaFree(d_prefixSum);
@@ -393,7 +391,7 @@ private:
         ull currents[] = {1, 1, 1, 1, 1, 1};
         for(int i = 0; i < h_mps[5]; i++){
             h_lookupTabe[i] = 0;
-            for(int j = 0; j <h_ masksz; j++){
+            for(int j = 0; j <h_masksz; j++){
                 h_lookupTabe[i] |= currents[j] << h_cumShifts[j];
                 currents[j] = currents[j] * h_ds[j];
                 currents[j] = (currents[j] & h_mps[j]) + (currents[j] >> h_shifts[j]);
@@ -430,7 +428,7 @@ private:
     static ull* Step3(char * d_data, ull* d_lookupTable) {
         ull* d_a = NULL;
         CubDebugExit(g_allocator.DeviceAllocate((void**)&d_a, sizeof(ull) * h_n));
-        CalculateHashesNew << <n / 256, 256 >> > (d_a, d_data, d_lookupTable);
+        CalculateHashesNew << <h_n / 256, 256 >> > (d_a, d_data, d_lookupTable);
         cudaFree(d_data);
         cudaDeviceSynchronize();
         return d_a;
@@ -443,7 +441,7 @@ private:
         cudaDeviceSynchronize();
         CubDebugExit(DeviceScan::InclusiveScan(d_temp_storage, temp_storage_bytes, d_a, d_prefixSum, sumModMersennePrime, h_n));
         CubDebugExit(g_allocator.DeviceAllocate(&d_temp_storage, temp_storage_bytes));
-        CubDebugExit(DeviceScan::InclusiveScan(d_temp_storage, temp_storage_bytes, d_a, d_prefixSum, sumModMersennePrime,h_ n));
+        CubDebugExit(DeviceScan::InclusiveScan(d_temp_storage, temp_storage_bytes, d_a, d_prefixSum, sumModMersennePrime,h_n));
         cudaFree(d_a);
         cudaFree(d_temp_storage);
         return d_prefixSum;
@@ -469,7 +467,6 @@ private:
     }
 public:
     static int* Execute() {
-        CopyDataToDevice();
         ull* d_lookupTable = Step1();
         static pair<pair<int*, int*>, ull*> p = Step2(test.d_patterns);
         ull* d_a = Step3(test.d_data, d_lookupTable);
