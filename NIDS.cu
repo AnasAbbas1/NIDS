@@ -26,7 +26,6 @@ const ull h_n = 1 << 18;
 const ull h_m = 13;
 const ull h_mps[] = {7, 31, 127, 8191, 131071, 524287};
 const int h_masksz = 6;
-const ull h_masks[] = {7, 248, 32512, 268402688, 35184103653376ull, 18446708889337462784ull};
 const ull h_shifts[] = {3, 5, 7, 13, 17, 19};
 const ull h_cumShifts[] = {0, 3, 8, 15, 28, 45};
 const ull h_ds[] = {2, 3, 5, 11, 13, 17};
@@ -195,11 +194,11 @@ struct CustomSumNew
     CUB_RUNTIME_FUNCTION __host__ __device__ __forceinline__
         ull operator()(const ull& a, const ull& b) const {
             ull ans = 0;
-            for(int j = 0; j < h_masksz; j++){
-                ull sum = ((a & h_masks[j]) >> h_cumShifts[j]) + ((b & h_masks[j]) >> h_cumShifts[j]);
-                sum = (sum & h_mps[j]) + (sum >> h_shifts[j]);
-                sum = sum >= h_mps[j] ? sum - h_mps[j] : sum;
-                ans |= sum << h_cumShifts[j];
+            for(int j = 0; j < d_masksz; j++){
+                ull sum = ((a & d_masks[j]) >> d_cumShifts[j]) + ((b & d_masks[j]) >> d_cumShifts[j]);
+                sum = (sum & d_mps[j]) + (sum >> d_shifts[j]);
+                sum = sum >= d_mps[j] ? sum - d_mps[j] : sum;
+                ans |= sum << d_cumShifts[j];
             }
         return ans;
     }
