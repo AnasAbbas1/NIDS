@@ -26,6 +26,7 @@ const ull h_n = 1 << 18;
 const ull h_m = 13;
 const ull h_mps[] = {7, 31, 127, 8191, 131071, 524287};
 const int h_masksz = 6;
+const ull h_masks[] = {7, 248, 32512, 268402688, 35184103653376ull, 18446708889337462784ull};
 const ull h_shifts[] = {3, 5, 7, 13, 17, 19};
 const ull h_cumShifts[] = {0, 3, 8, 15, 28, 45};
 const ull h_ds[] = {2, 3, 5, 11, 13, 17};
