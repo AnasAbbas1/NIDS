@@ -207,13 +207,13 @@ __global__ void CalculateHashPatternNew(char* d_patterns, int* d_controlArray, i
             hash = (hash & mps[j]) + (hash >> shifts[j]);
             hash = hash >= mps[j] ? hash - mps[j] : hash;
             patternHash &= nmasks[j];
-            pattern |= hash << cumShifts[j];
+            patternHash |= hash << cumShifts[j];
         }
     }
 
     d_patternHashes[patternIndex] = patternHash;
     while (atomicAdd(&d_controlArray[patternHash & HTMSK], 1) != 0)
-        patternHash = (patternHash == HTMSK) ? 0: pattern + 1;
+        patternHash = (patternHash == HTMSK) ? 0: patternHash + 1;
 
     d_hashTable[patternHash & HTMSK] = patternIndex;
 }
@@ -261,7 +261,7 @@ __global__ void FindMatchesNew(ull* d_prefixSum, ull* d_lookupTable, int* d_cont
             ull tmp = (d_prefixSum[j + m - 1] & masks[k]) >> cumShifts[k];
             if(j){
                 tmp = tmp + mps[k] - ((d_prefixSum[j - 1] & masks[k]) >> cumShifts[k]);
-                tmp = (tmp >= mps[k] ? tmp - mps[k] : tmp)
+                tmp = (tmp >= mps[k] ? tmp - mps[k] : tmp);
             }
             tmp = tmp * (d_lookupTable[(m + ((n - j + mps[k] - 2ll) / (mps[k] - 1ll)) * (mps[k] - 1ll) - n + j) % (mps[k] - 1ll)] >> cumShifts[k]) ;
             tmp = (tmp & mps[k]) + (tmp >> shifts[k]);
@@ -270,8 +270,8 @@ __global__ void FindMatchesNew(ull* d_prefixSum, ull* d_lookupTable, int* d_cont
         
         while (d_controlArray[hash & HTMSK]) {
             if (hash == d_patternHashes[d_hashTable[hash & HTMSK]]) {
-                d_output[j] = patternIndex;
-                return; 
+                d_output[j] = d_hashTable[hash & HTMSK];
+                return;
             }
             hash = (hash == HTMSK) ? 0: hash + 1;
         }
@@ -411,7 +411,7 @@ private:
         cudaDeviceSynchronize();
         delete[] h_hashTable;
         delete[] h_controlArray;
-        return { d_controlArray, d_hashTable, d_patternHashes};
+        return { {d_controlArray, d_hashTable}, d_patternHashes};
     }
     static ull* Step3(char * d_data, ull* d_lookupTable) {
         ull* d_a = NULL;
