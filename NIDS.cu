@@ -189,7 +189,7 @@ struct CustomSum
 }sumMod;
 struct CustomSumNew
 {
-    CUB_RUNTIME_FUNCTION __host__ __device__ __forceinline__
+    CUB_RUNTIME_FUNCTION __device__ __forceinline__
         ull operator()(const ull& a, const ull& b) const {
             ull ans = 0;
             for(int j = 0; j < d_masksz; j++){
