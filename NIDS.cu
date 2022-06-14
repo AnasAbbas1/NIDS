@@ -422,10 +422,10 @@ private:
         // debug
         ull * h_patternHashes = new ull[h_p];
         CubDebugExit(cudaMemcpy(h_patternHashes, d_patternHashes, sizeof(int) * h_p, cudaMemcpyDeviceToHost));
-        CubDebugExit(cudaMemcpy(g_h_output, d_hashTable, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
-        CubDebugExit(cudaMemcpy(g_h_output, d_controlArray, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
+        CubDebugExit(cudaMemcpy(h_hashTable, d_hashTable, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
+        CubDebugExit(cudaMemcpy(h_controlArray, d_controlArray, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
         string str(g_h_patterns);
-        cout << str.substr(0, m + 1) << " " << h_patternHashes[0] << endl;
+        cout << str.substr(0, h_m + 1) << " " << h_patternHashes[0] << endl;
         for(int i = 0; i < h_HTSZ; i++){
             if(d_controlArray[i]){
                 cout << i << " " << d_controlArray[i] << " " << d_hashTable[i] << endl;
