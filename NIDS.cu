@@ -444,7 +444,7 @@ private:
         ull * h_a = new ull[h_n];
         CubDebugExit(cudaMemcpy(h_prefixSum, d_prefixSum, sizeof(ull) * h_n, cudaMemcpyDeviceToHost));
         CubDebugExit(cudaMemcpy(h_a, d_a, sizeof(ull) * h_n, cudaMemcpyDeviceToHost));
-        cout << d_a[0] << " " << d_a[1] << " "  << h_prefixSum[0] <<" " << h_prefixSum[1]<< endl;
+        cout << h_a[0] << " " << h_a[1] << " " << h_a[2] << " "  << h_prefixSum[0] <<" " << h_prefixSum[1] << " " << h_prefixSum[2]<< endl;
         cout << "loop completed" << endl;
         //end
         cudaFree(d_a);
