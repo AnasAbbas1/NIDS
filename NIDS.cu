@@ -226,10 +226,9 @@ __global__ void CalculateHashPatternNew(char* d_patterns, int* d_controlArray, i
             patternHash &= d_nmasks[j];
             patternHash |= hash << d_cumShifts[j];
         }
-        if(patternIndex == 0)d_patternHashes[i] = patternHash;
     }
 
-    //d_patternHashes[patternIndex] = patternHash;
+    d_patternHashes[patternIndex] = patternHash;
     while (atomicAdd(&d_controlArray[patternHash & d_HTMSK], 1) != 0)
         patternHash = (patternHash == d_HTMSK) ? 0: patternHash + 1;
 
@@ -424,14 +423,9 @@ private:
         CubDebugExit(cudaMemcpy(h_patternHashes, d_patternHashes, sizeof(int) * h_p, cudaMemcpyDeviceToHost));
         CubDebugExit(cudaMemcpy(h_hashTable, d_hashTable, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
         CubDebugExit(cudaMemcpy(h_controlArray, d_controlArray, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
-        string str(g_h_patterns);
-        for(int i = 0; i < h_m; i++){
-            cout <<h_patternHashes[i] << endl;
-        }
-        cout << str.substr(0, h_m + 1) << " " << h_patternHashes[0] << endl;
         for(int i = 0; i < h_HTSZ; i++){
             if(h_controlArray[i]){
-                cout << i << " " << h_controlArray[i] << " " << h_hashTable[i] << endl;
+                cout << i << " " << h_controlArray[i] << " " << h_hashTable[i] << " " <<  h_patternHashes[h_hashTable[i]] << " " << str(g_h_patterns).substr(h_hashTable[i] * h_m, h_m) << endl;
                 break;
             }
         }
