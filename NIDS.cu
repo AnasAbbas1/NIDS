@@ -43,10 +43,10 @@ __constant__ const ull d_shifts[] = {3, 5, 7, 13, 17, 19};
 __constant__ const ull d_cumShifts[] = {0, 3, 8, 15, 28, 45};
 __constant__ const ull d_ds[] = {2, 3, 5, 11, 13, 17};
 __constant__ const ull d_HTMSK = h_HTSZ - 1;
-char* h_data;
-char* h_patterns;
-char* d_data;
-char* d_patterns;
+char* g_h_data;
+char* g_h_patterns;
+char* g_d_data;
+char* g_d_patterns;
 struct testcase {
 private:
     string input_str;
@@ -144,10 +144,10 @@ public:
         WriteMatches(expectedMatches, "outputfiles\\Expected.txt");
     }
     static void CopyDataToDevice(){
-        CubDebugExit(g_allocator.DeviceAllocate((void**)&d_data, sizeof(char) * h_n));
-        CubDebugExit(cudaMemcpy(d_data, h_data, sizeof(char) * h_n, cudaMemcpyHostToDevice));
-        CubDebugExit(g_allocator.DeviceAllocate((void**)&d_patterns, sizeof(char) * h_p * h_m));
-        CubDebugExit(cudaMemcpy(d_patterns, h_patterns, sizeof(char) * h_p * h_m, cudaMemcpyHostToDevice));
+        CubDebugExit(g_allocator.DeviceAllocate((void**)&g_d_data, sizeof(char) * h_n));
+        CubDebugExit(cudaMemcpy(g_d_data, g_h_data, sizeof(char) * h_n, cudaMemcpyHostToDevice));
+        CubDebugExit(g_allocator.DeviceAllocate((void**)&g_d_patterns, sizeof(char) * h_p * h_m));
+        CubDebugExit(cudaMemcpy(g_d_patterns, g_h_patterns, sizeof(char) * h_p * h_m, cudaMemcpyHostToDevice));
         delete[] h_patterns;
         delete[] h_data;
     }
@@ -368,13 +368,13 @@ public:
         //1.Load a preprocessed lookup table for di mod q (0 ≤ i ≤ q − 1)
         int* d_lookupTable = Step1();
         //2. Compute the values of h(Pk) for all k (0 ≤ k ≤ p − 1) in parallel and create the hash table HT using the calculated values.
-        pair<int*, int*> p = Step2(d_patterns);
+        pair<int*, int*> p = Step2(g_d_patterns);
         //3.Compute the a0, a1,..., an−1 in parallel.
-        int* d_a = Step3(d_data, d_lookupTable);
+        int* d_a = Step3(g_d_data, d_lookupTable);
         //4.Compute the prefix-sums ˆa0, aˆ1,..., aˆn−1.
         int* d_prefixSum = Step4(d_a);
         //5.  For all j (0 ≤ j ≤ n − m), compute ( ˆaj+m−1 − aˆ j−1) · dm−n−j, which is equal to h(tjtj + 1 ... tj + m−1).If array control[h(tjtj + 1 ... tj + m−1)]  0 then compare the characters of text and pattern with Match(i, j).
-        int* h_output = Step5(d_prefixSum, d_data, d_patterns, d_lookupTable, p.first, p.second);
+        int* h_output = Step5(d_prefixSum, g_d_data, g_d_patterns, d_lookupTable, p.first, p.second);
     
         return h_output;
     }
@@ -397,6 +397,7 @@ private:
         }    
         CubDebugExit(g_allocator.DeviceAllocate((void**)&ret, sizeof(ull) * h_mps[5]));
         CubDebugExit(cudaMemcpy(ret, h_lookupTabe, sizeof(ull) * h_mps[5], cudaMemcpyHostToDevice));
+        cout << h_lookupTabe[0] << " " << h_lookupTabe[1] << " " << h_lookupTabe[2] << " " << h_lookupTabe[3] << " " << h_lookupTabe[4] << " " << h_lookupTabe[5] << endl;
         delete[] h_lookupTabe;
         cudaDeviceSynchronize();
         return ret;
@@ -417,6 +418,20 @@ private:
         CalculateHashPatternNew <<< 1, h_p >>> (d_patterns, d_controlArray, d_hashTable, d_patternHashes);
         cudaFree(d_patterns);
         cudaDeviceSynchronize();
+        // debug
+        ull * h_patternHashes = new ull[h_p];
+        CubDebugExit(cudaMemcpy(h_patternHashes, d_patternHashes, sizeof(int) * h_p, cudaMemcpyDeviceToHost));
+        CubDebugExit(cudaMemcpy(h_output, d_hashTable, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
+        CubDebugExit(cudaMemcpy(h_output, d_controlArray, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
+        string str(g_h_patterns)
+        cout << str.substr(0, m + 1) << " " << h_patternHashes[0] << endl;
+        for(int i = 0; i < h_HTSZ; i++){
+            if(d_controlArray[i]){
+                cout << i << " " << d_controlArray[i] << " " << d_hashTable[i] << endl;
+                break;
+            }
+        }
+        //end
         delete[] h_hashTable;
         delete[] h_controlArray;
         return { {d_controlArray, d_hashTable}, d_patternHashes};
@@ -465,9 +480,9 @@ public:
     static int* Execute() {
         ull* d_lookupTable = Step1();
         cout << "step 1 done" << endl;
-        static pair<pair<int*, int*>, ull*> p = Step2(d_patterns);
+        static pair<pair<int*, int*>, ull*> p = Step2(g_d_patterns);
         cout << "step 2 done" << endl;
-        ull* d_a = Step3(d_data, d_lookupTable);
+        ull* d_a = Step3(g_d_data, d_lookupTable);
         cout << "step 3 done" << endl;
         ull* d_prefixSum = Step4(d_a);
         cout << "step 4 done" << endl;
