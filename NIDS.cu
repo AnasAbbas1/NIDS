@@ -166,10 +166,14 @@ public:
             cout << "sizes are not equal expected size is " << expectedMatches.size() << " and actual size is " << gpuMatches.size() << endl;
             same = false;
         }
-        for (int i = 0;i < min(gpuMatches.size(), expectedMatches.size()); i++) {
+        for (int i = 0, limit = 0;i < min(gpuMatches.size(), expectedMatches.size()); i++) {
             if (gpuMatches[i].first != expectedMatches[i].first || gpuMatches[i].second != expectedMatches[i].second) {
                 cout << "Mismatch at position: " << i << endl;
+                limit++;
                 same = false;
+                if(limit >= 100){
+                    break;
+                }
             }
         }
         if (same) {
