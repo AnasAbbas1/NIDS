@@ -427,8 +427,8 @@ private:
         string str(g_h_patterns);
         cout << str.substr(0, h_m + 1) << " " << h_patternHashes[0] << endl;
         for(int i = 0; i < h_HTSZ; i++){
-            if(d_controlArray[i]){
-                cout << i << " " << d_controlArray[i] << " " << d_hashTable[i] << endl;
+            if(h_controlArray[i]){
+                cout << i << " " << h_controlArray[i] << " " << h_hashTable[i] << endl;
                 break;
             }
         }
