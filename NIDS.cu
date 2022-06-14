@@ -398,7 +398,7 @@ private:
         }    
         CubDebugExit(g_allocator.DeviceAllocate((void**)&ret, sizeof(ull) * h_mps[5]));
         CubDebugExit(cudaMemcpy(ret, h_lookupTabe, sizeof(ull) * h_mps[5], cudaMemcpyHostToDevice));
-        cout << h_lookupTabe[0] << " " << h_lookupTabe[1] << " " << h_lookupTabe[2] << " " << h_lookupTabe[3] << " " << h_lookupTabe[4] << " " << h_lookupTabe[5] << endl;
+        cout  << h_lookupTabe[50] << endl;
         delete[] h_lookupTabe;
         cudaDeviceSynchronize();
         return ret;
@@ -432,6 +432,7 @@ private:
                 break;
             }
         }
+        cout << "loop completed" << endl;
         //end
         delete[] h_hashTable;
         delete[] h_controlArray;
