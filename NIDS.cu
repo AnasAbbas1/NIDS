@@ -277,10 +277,10 @@ __global__ void FindMatchesNew(ull* d_prefixSum, ull* d_lookupTable, int* d_cont
         for(int k = 0; k < d_masksz; k++){
             ull tmp = (d_prefixSum[j + d_m - 1] & d_masks[k]) >> d_cumShifts[k];
             if(j){
-                tmp = tmp + d_mps[k] - ((d_prefixSum[j - 1] & d_masks[k]) >> d_cumShifts[k]);
+                tmp = (tmp + d_mps[k]) - ((d_prefixSum[j - 1] & d_masks[k]) >> d_cumShifts[k]);
                 tmp = (tmp >= d_mps[k] ? tmp - d_mps[k] : tmp);
             }
-            tmp = tmp * (d_lookupTable[(d_m + ((d_n - j + d_mps[k] - 2ll) / (d_mps[k] - 1ll)) * (d_mps[k] - 1ll) - d_n + j) % (d_mps[k] - 1ll)] >> d_cumShifts[k]) ;
+            tmp = tmp * ((d_lookupTable[(d_m + ((d_n - j + d_mps[k] - 2ll) / (d_mps[k] - 1ll)) * (d_mps[k] - 1ll) - d_n + j) % (d_mps[k] - 1ll)] & d_masks[k]) >> d_cumShifts[k]) ;
             tmp = (tmp & d_mps[k]) + (tmp >> d_shifts[k]);
             hash |= (tmp >= d_mps[k] ? tmp - d_mps[k] : tmp) << d_cumShifts[k]; 
         }
@@ -439,14 +439,6 @@ private:
         CubDebugExit(DeviceScan::InclusiveScan(d_temp_storage, temp_storage_bytes, d_a, d_prefixSum, sumModMersennePrime, h_n));
         CubDebugExit(g_allocator.DeviceAllocate(&d_temp_storage, temp_storage_bytes));
         CubDebugExit(DeviceScan::InclusiveScan(d_temp_storage, temp_storage_bytes, d_a, d_prefixSum, sumModMersennePrime,h_n));
-        // debug
-        ull * h_prefixSum = new ull[h_n];
-        ull * h_a = new ull[h_n];
-        CubDebugExit(cudaMemcpy(h_prefixSum, d_prefixSum, sizeof(ull) * h_n, cudaMemcpyDeviceToHost));
-        CubDebugExit(cudaMemcpy(h_a, d_a, sizeof(ull) * h_n, cudaMemcpyDeviceToHost));
-        cout << h_a[0] << " " << h_a[1] << " " << h_a[2] << " "  << h_prefixSum[0] <<" " << h_prefixSum[1] << " " << h_prefixSum[2]<< endl;
-        cout << "loop completed" << endl;
-        //end
         cudaFree(d_a);
         cudaFree(d_temp_storage);
         return d_prefixSum;
