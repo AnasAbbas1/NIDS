@@ -418,19 +418,6 @@ private:
         CalculateHashPatternNew <<< 1, h_p >>> (d_patterns, d_controlArray, d_hashTable, d_patternHashes);
         cudaFree(d_patterns);
         cudaDeviceSynchronize();
-        // debug
-        ull * h_patternHashes = new ull[h_p];
-        CubDebugExit(cudaMemcpy(h_patternHashes, d_patternHashes, sizeof(int) * h_p, cudaMemcpyDeviceToHost));
-        CubDebugExit(cudaMemcpy(h_hashTable, d_hashTable, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
-        CubDebugExit(cudaMemcpy(h_controlArray, d_controlArray, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
-        for(int i = 0; i < h_HTSZ; i++){
-            if(h_controlArray[i]){
-                cout << i << " " << h_controlArray[i] << " " << h_hashTable[i] << " " <<  h_patternHashes[h_hashTable[i]] << " " << string(g_h_patterns).substr(h_hashTable[i] * h_m, h_m) << endl;
-                break;
-            }
-        }
-        cout << "loop completed" << endl;
-        //end
         delete[] h_hashTable;
         delete[] h_controlArray;
         return { {d_controlArray, d_hashTable}, d_patternHashes};
