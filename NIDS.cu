@@ -430,8 +430,9 @@ private:
         cudaDeviceSynchronize();
         // debug
         ull * h_a = new ull[h_n];
+
         CubDebugExit(cudaMemcpy(h_a, d_a, sizeof(ull) * h_n, cudaMemcpyDeviceToHost));
-        cout << h_a[h_n - 20] << " " << string(g_h_data).[h_n - 20] << endl;
+        cout << h_a[h_n - 20] << " " << string(g_h_data)[h_n - 20] << endl;
         cout << "loop completed" << endl;
         //end
         return d_a;
