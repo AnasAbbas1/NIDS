@@ -428,13 +428,6 @@ private:
         CalculateHashesNew << <h_n / 256, 256 >> > (d_a, d_data, d_lookupTable);
         cudaFree(d_data);
         cudaDeviceSynchronize();
-        // debug
-        ull * h_a = new ull[h_n];
-
-        CubDebugExit(cudaMemcpy(h_a, d_a, sizeof(ull) * h_n, cudaMemcpyDeviceToHost));
-        cout << h_a[h_n - 20] << " " << string(g_h_data)[h_n - 20] << endl;
-        cout << "loop completed" << endl;
-        //end
         return d_a;
     }
     static ull* Step4(ull* d_a) {
@@ -446,6 +439,14 @@ private:
         CubDebugExit(DeviceScan::InclusiveScan(d_temp_storage, temp_storage_bytes, d_a, d_prefixSum, sumModMersennePrime, h_n));
         CubDebugExit(g_allocator.DeviceAllocate(&d_temp_storage, temp_storage_bytes));
         CubDebugExit(DeviceScan::InclusiveScan(d_temp_storage, temp_storage_bytes, d_a, d_prefixSum, sumModMersennePrime,h_n));
+        // debug
+        ull * h_prefixSum = new ull[h_n];
+        ull * h_a = new ull[h_n];
+        CubDebugExit(cudaMemcpy(h_prefixSum, d_prefixSum, sizeof(ull) * h_n, cudaMemcpyDeviceToHost));
+        CubDebugExit(cudaMemcpy(h_a, d_a, sizeof(ull) * h_n, cudaMemcpyDeviceToHost));
+        cout << d_a[0] << " " << d_a[1] << " "  << h_prefixSum[0] <<" " << h_prefixSum[1]<< endl;
+        cout << "loop completed" << endl;
+        //end
         cudaFree(d_a);
         cudaFree(d_temp_storage);
         return d_prefixSum;
