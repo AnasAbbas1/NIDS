@@ -77,7 +77,7 @@ private:
         for (int patternIndex = 0; patternIndex < h_p; patternIndex++) {
             string pattern = "";
             for (int i = patternIndex * h_m; i < patternIndex * h_m + h_m; i++)
-                pattern += h_patterns[i];
+                pattern += g_h_patterns[i];
             st.insert(pattern);
             myfile << patternIndex << ": " << pattern << endl;
         }
@@ -113,15 +113,15 @@ private:
         return ret;
     }
     void GenerateInputData() {
-        h_data = StringGeneration(h_n);
-        d_data = NULL;
-        h_patterns = PatternsGeneration();
-        d_patterns = NULL;
+        g_h_data = StringGeneration(h_n);
+        g_d_data = NULL;
+        g_h_patterns = PatternsGeneration();
+        g_d_patterns = NULL;
     }
     void FindPattern(int patternIndex) {
         string pattern = "";
         for (int i = patternIndex * h_m; i < patternIndex * h_m + h_m; i++)
-            pattern += h_patterns[i];
+            pattern += g_h_patterns[i];
 
         size_t pos = input_str.find(pattern);
         while (pos != string::npos) {
@@ -131,15 +131,15 @@ private:
 
     }
     void SolveOnCPU() {
-        input_str = string(h_data);
+        input_str = string(g_h_data);
         for (int i = 0; i < h_p; i++) 
             FindPattern(i);
     }
 public:
     testcase() {
         GenerateInputData();
-        WriteData(h_data);
-        WritePatterns(h_patterns);
+        WriteData(g_h_data);
+        WritePatterns(g_h_patterns);
         SolveOnCPU();
         WriteMatches(expectedMatches, "outputfiles\\Expected.txt");
     }
@@ -148,8 +148,9 @@ public:
         CubDebugExit(cudaMemcpy(g_d_data, g_h_data, sizeof(char) * h_n, cudaMemcpyHostToDevice));
         CubDebugExit(g_allocator.DeviceAllocate((void**)&g_d_patterns, sizeof(char) * h_p * h_m));
         CubDebugExit(cudaMemcpy(g_d_patterns, g_h_patterns, sizeof(char) * h_p * h_m, cudaMemcpyHostToDevice));
-        delete[] h_patterns;
-        delete[] h_data;
+        // debug
+        //delete[] g_h_patterns;
+        //delete[] g_h_data;
     }
     void Validate(int* h_output) {
         vector<pair<int, int>>gpuMatches;
@@ -421,9 +422,9 @@ private:
         // debug
         ull * h_patternHashes = new ull[h_p];
         CubDebugExit(cudaMemcpy(h_patternHashes, d_patternHashes, sizeof(int) * h_p, cudaMemcpyDeviceToHost));
-        CubDebugExit(cudaMemcpy(h_output, d_hashTable, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
-        CubDebugExit(cudaMemcpy(h_output, d_controlArray, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
-        string str(g_h_patterns)
+        CubDebugExit(cudaMemcpy(g_h_output, d_hashTable, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
+        CubDebugExit(cudaMemcpy(g_h_output, d_controlArray, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
+        string str(g_h_patterns);
         cout << str.substr(0, m + 1) << " " << h_patternHashes[0] << endl;
         for(int i = 0; i < h_HTSZ; i++){
             if(d_controlArray[i]){
