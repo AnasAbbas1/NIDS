@@ -34,6 +34,7 @@ const int h_d = 2;
 __constant__ const int d_d = 2;
 __constant__ const ull d_q = 65521;
 __constant__ const ull d_n = 1 << 20;
+__constant__  const int d_p = 1024;
 __constant__ const ull d_m = 13;
 __constant__ const ull d_mps[] = {7, 31, 127, 8191, 131071, 524287};
 __constant__ const int d_masksz = 6;
