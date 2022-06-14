@@ -425,7 +425,7 @@ private:
         CubDebugExit(cudaMemcpy(h_hashTable, d_hashTable, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
         CubDebugExit(cudaMemcpy(h_controlArray, d_controlArray, sizeof(int) * h_HTSZ, cudaMemcpyDeviceToHost));
         string str(g_h_patterns);
-        for(int i = 0; i < m; i++){
+        for(int i = 0; i < h_m; i++){
             cout <<h_patternHashes[i] << endl;
         }
         cout << str.substr(0, h_m + 1) << " " << h_patternHashes[0] << endl;
