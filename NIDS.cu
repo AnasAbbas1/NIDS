@@ -431,7 +431,7 @@ private:
         // debug
         ull * h_a = new ull[h_n];
         CubDebugExit(cudaMemcpy(h_a, d_a, sizeof(int) * h_p, cudaMemcpyDeviceToHost));
-        cout << h_a[50] << " " << string(g_h_data).substr(0, 50) << endl;
+        cout << h_a[h_n - 20] << " " << string(g_h_data).substr(0, 50) << endl;
         cout << "loop completed" << endl;
         //end
         return d_a;
