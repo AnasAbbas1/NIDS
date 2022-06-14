@@ -464,15 +464,20 @@ private:
 public:
     static int* Execute() {
         ull* d_lookupTable = Step1();
+        cout << "step 1 done" << endl;
         static pair<pair<int*, int*>, ull*> p = Step2(d_patterns);
+        cout << "step 2 done" << endl;
         ull* d_a = Step3(d_data, d_lookupTable);
+        cout << "step 3 done" << endl;
         ull* d_prefixSum = Step4(d_a);
+        cout << "step 4 done" << endl;
         int* h_output = Step5(d_prefixSum, d_lookupTable, p.first.first, p.first.second, p.second);
+        cout << "step 5 done" << endl;
         return h_output;
     }
 };
 int main(){
     testcase::CopyDataToDevice();
-    test.Validate(PaperImplementation::Execute());
+    test.Validate(ProposedImplementation::Execute());
     return 0;
 }
