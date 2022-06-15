@@ -84,16 +84,16 @@ public:
     static int* Execute() {
         timer[0] = clock();
         ull* d_lookupTable = Step1();
-        timer[0] = timer[0] - clock();
+        timer[0] = clock() - timer[0];
         timer[1] = clock();
         static pair<pair<int*, int*>, ull*> p = Step2(g_d_patterns);
-        timer[1] = timer[1] - clock();
+        timer[1] = clock() - timer[1];
         timer[2] = clock();
         ull* d_a = Step3(g_d_data, d_lookupTable);
-        timer[2] = timer[2] - clock();
+        timer[2] = clock() - timer[2];
         timer[3] = clock();
         ull* d_prefixSum = Step4(d_a);
-        timer[3] = timer[3] - clock();
+        timer[3] = clock() - timer[3];
         timer[4] = clock();
         int* h_output = Step5(d_prefixSum, d_lookupTable, p.first.first, p.first.second, p.second);
         timer[4] = clock() - timer[4];

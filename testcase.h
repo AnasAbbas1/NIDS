@@ -131,9 +131,12 @@ public:
         }
         if (same) {
             cout << name << " Code ran fine and output is as expected"<< endl;
+            clock_t sum = 0;
             for(int i = 0; i < 5; i++){
-                cout << "step #" << i + 1 << " : completed execution in " << timer[i] / (CLOCKS_PER_SEC / 1000000) << "us" << endl;
+                cout << "step #" << i + 1 << " : completed execution in " << timer[i] / (CLOCKS_PER_SEC / 1e6) << "us" << endl;
+                sum += timer[i];
             }
+            cout << "total execution time is " << sum / (CLOCKS_PER_SEC / 1e3) << "ms" << endl;
         }
         else {
             cout << "Results doesn't match, debug your code" << endl;

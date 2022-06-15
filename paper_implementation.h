@@ -72,19 +72,19 @@ public:
         timer[0] = clock();
         //1.Load a preprocessed lookup table for di mod q (0 ≤ i ≤ q − 1)
         int* d_lookupTable = Step1();
-        timer[0] = timer[0] - clock();
+        timer[0] = clock() - timer[0];
         timer[1] = clock();
         //2. Compute the values of h(Pk) for all k (0 ≤ k ≤ p − 1) in parallel and create the hash table HT using the calculated values.
         pair<int*, int*> p = Step2(g_d_patterns);
-        timer[1] = timer[1] - clock();
+        timer[1] = clock() - timer[1];
         timer[2] = clock();
         //3.Compute the a0, a1,..., an−1 in parallel.
         int* d_a = Step3(g_d_data, d_lookupTable);
-        timer[2] = timer[2] - clock();
+        timer[2] = clock() - timer[2];
         timer[3] = clock();
         //4.Compute the prefix-sums ˆa0, aˆ1,..., aˆn−1.
         int* d_prefixSum = Step4(d_a);
-        timer[3] = timer[3] - clock();
+        timer[3] = clock() - timer[3];
         timer[4] = clock();
         //5.  For all j (0 ≤ j ≤ n − m), compute ( ˆaj+m−1 − aˆ j−1) · dm−n−j, which is equal to h(tjtj + 1 ... tj + m−1).If array control[h(tjtj + 1 ... tj + m−1)]  0 then compare the characters of text and pattern with Match(i, j).
         int* h_output = Step5(d_prefixSum, g_d_data, g_d_patterns, d_lookupTable, p.first, p.second);
