@@ -17,14 +17,14 @@ private:
     }
     void WriteData(char* data) {
         ofstream myfile;
-        myfile.open("outputfiles/data.txt");
+        myfile.open("/content/NIDS-main/outputfiles/data.txt");
         myfile << string(data);
         myfile.close();
     }
     void WritePatterns(char * patterns) {
         set<string>st;
         ofstream myfile;
-        myfile.open("outputfiles/patterns.txt");
+        myfile.open("/content/NIDS-main/outputfiles/patterns.txt");
         for (int patternIndex = 0; patternIndex < h_p; patternIndex++) {
             string pattern = "";
             for (int i = patternIndex * h_m; i < patternIndex * h_m + h_m; i++)
@@ -92,7 +92,7 @@ public:
         WriteData(g_h_data);
         WritePatterns(g_h_patterns);
         SolveOnCPU();
-        WriteMatches(expectedMatches, "outputfiles/Expected.txt");
+        WriteMatches(expectedMatches, "/content/NIDS-main/outputfiles/Expected.txt");
     }
     static void CopyDataToDevice(){
         CubDebugExit(g_allocator.DeviceAllocate((void**)&g_d_data, sizeof(char) * h_n));
@@ -114,7 +114,7 @@ public:
             }
         }
         sort(gpuMatches.begin(), gpuMatches.end());
-        WriteMatches(gpuMatches, "outputfiles/Actual(" + name +").txt");
+        WriteMatches(gpuMatches, "/content/NIDS-main/outputfiles/Actual(" + name +").txt");
         bool same = true;
         if (gpuMatches.size() != expectedMatches.size()) {
             cout << "sizes are not equal expected size is " << expectedMatches.size() << " and actual size is " << gpuMatches.size() << endl;
