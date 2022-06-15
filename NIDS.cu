@@ -238,7 +238,7 @@ __global__ void CalculateHashPatternNew(char* d_patterns, int* d_controlArray, i
     while (atomicAdd(&d_controlArray[hashOfHash], 1) != 0)
         hashOfHash = (hashOfHash == d_HTMSK) ? 0: hashOfHash + 1;
 
-    d_hashTable[patternHash & d_HTMSK] = patternIndex;
+    d_hashTable[hashOfHash] = patternIndex;
 }
 __global__ void CalculateHashes(int* d_a, char* d_data, int* d_lookupTable) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
