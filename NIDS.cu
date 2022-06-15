@@ -22,7 +22,7 @@ CachingDeviceAllocator g_allocator(true);
 #define ull unsigned long long
 const ull h_q = 65521;
 const int h_p = 1024;
-const ull h_n = 1 << 25;
+const ull h_n = 1 << 20;
 const ull h_m = 13;
 const ull h_mps[] = {7, 31, 127, 8191, 131071, 524287};
 const int h_masksz = 6;
@@ -33,7 +33,7 @@ const ull h_HTSZ = 1 << 18;
 const int h_d = 2;
 __constant__ const int d_d = 2;
 __constant__ const ull d_q = 65521;
-__constant__ const ull d_n = 1 << 25;
+__constant__ const ull d_n = 1 << 20;
 __constant__  const int d_p = 1024;
 __constant__ const ull d_m = 13;
 __constant__ const ull d_mps[] = {7, 31, 127, 8191, 131071, 524287};
@@ -234,8 +234,9 @@ __global__ void CalculateHashPatternNew(char* d_patterns, int* d_controlArray, i
     }
 
     d_patternHashes[patternIndex] = patternHash;
-    while (atomicAdd(&d_controlArray[patternHash & d_HTMSK], 1) != 0)
-        patternHash = (patternHash == d_HTMSK) ? 0: patternHash + 1;
+    ull hashOfHash = patternHash & d_HTMSK;
+    while (atomicAdd(&d_controlArray[hashOfHash], 1) != 0)
+        hashOfHash = (hashOfHash == d_HTMSK) ? 0: hashOfHash + 1;
 
     d_hashTable[patternHash & d_HTMSK] = patternIndex;
 }
@@ -289,21 +290,15 @@ __global__ void FindMatchesNew(ull* d_prefixSum, ull* d_lookupTable, int* d_cont
             tmp = (tmp & d_mps[k]) + (tmp >> d_shifts[k]);
             hash |= (tmp >= d_mps[k] ? tmp - d_mps[k] : tmp) << d_cumShifts[k]; 
         }
-        for(int i = 0; i < d_p; i++){
-            if (hash == d_patternHashes[i]) {
-                d_output[j] = i;
+
+        ull hashOfHash = hash & d_HTMSK;
+        while (d_controlArray[hashOfHash]) {
+            if (hash == d_patternHashes[d_hashTable[hashOfHash]]) {
+                d_output[j] = d_hashTable[hashOfHash];
                 return;
             }
+            hashOfHash = (hashOfHash == d_HTMSK) ? 0: hashOfHash + 1;
         }
-        /*
-        while (d_controlArray[hash & d_HTMSK]) {
-            if (hash == d_patternHashes[d_hashTable[hash & d_HTMSK]]) {
-                d_output[j] = d_hashTable[hash & d_HTMSK];
-                return;
-            }
-            hash = (hash == d_HTMSK) ? 0: hash + 1;
-        }
-        */
     }
 }
 class PaperImplementation{
