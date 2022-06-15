@@ -132,7 +132,7 @@ public:
         if (same) {
             cout << name << " Code ran fine and output is as expected"<< endl;
             for(int i = 0; i < 5; i++){
-                cout << "step #" << i + 1 << " : completed execution in " << timers[i] / (CLOCKS_PER_SEC / 1000000) << "us" << endl;
+                cout << "step #" << i + 1 << " : completed execution in " << timer[i] / (CLOCKS_PER_SEC / 1000000) << "us" << endl;
             }
         }
         else {
