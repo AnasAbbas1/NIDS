@@ -6,6 +6,7 @@
 int main(){
     testcase::CopyDataToDevice();
     test.Validate(ProposedImplementation::Execute(), "proposed");
+    test.Validate(PaperImplementation::Execute(), "paper");
     testcase::ClearDataFromDevice();
     return 0;
 }

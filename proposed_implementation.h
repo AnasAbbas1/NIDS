@@ -87,6 +87,7 @@ public:
         ull* d_a = Step3(g_d_data, d_lookupTable);
         ull* d_prefixSum = Step4(d_a);
         int* h_output = Step5(d_prefixSum, d_lookupTable, p.first.first, p.first.second, p.second);
+        timer = clock() - timer;
         return h_output;
     }
 };

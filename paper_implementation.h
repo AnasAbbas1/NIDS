@@ -68,7 +68,7 @@ private:
     }
 public:
     static int* Execute() {
-        //CopyDataToDevice();
+        timer = clock();
         //1.Load a preprocessed lookup table for di mod q (0 ≤ i ≤ q − 1)
         int* d_lookupTable = Step1();
         //2. Compute the values of h(Pk) for all k (0 ≤ k ≤ p − 1) in parallel and create the hash table HT using the calculated values.
@@ -79,7 +79,7 @@ public:
         int* d_prefixSum = Step4(d_a);
         //5.  For all j (0 ≤ j ≤ n − m), compute ( ˆaj+m−1 − aˆ j−1) · dm−n−j, which is equal to h(tjtj + 1 ... tj + m−1).If array control[h(tjtj + 1 ... tj + m−1)]  0 then compare the characters of text and pattern with Match(i, j).
         int* h_output = Step5(d_prefixSum, g_d_data, g_d_patterns, d_lookupTable, p.first, p.second);
-    
+        timer = clock() - timer;
         return h_output;
     }
 };

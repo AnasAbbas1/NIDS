@@ -107,7 +107,6 @@ public:
         cudaFree(g_d_patterns);
     }
     void Validate(int* h_output, string name) {
-        timer = clock() - timer;
         vector<pair<int, int>>gpuMatches;
         for (int i = 0; i < h_n; i++) {
             if (h_output[i] != -1) {
