@@ -107,6 +107,7 @@ public:
         cudaFree(g_d_patterns);
     }
     void Validate(int* h_output, string name) {
+        timer = clock() - timer;
         vector<pair<int, int>>gpuMatches;
         for (int i = 0; i < h_n; i++) {
             if (h_output[i] != -1) {
@@ -114,7 +115,6 @@ public:
             }
         }
         sort(gpuMatches.begin(), gpuMatches.end());
-        WriteMatches(gpuMatches, "/content/NIDS-main/outputfiles/Actual(" + name +").txt");
         bool same = true;
         if (gpuMatches.size() != expectedMatches.size()) {
             cout << "sizes are not equal expected size is " << expectedMatches.size() << " and actual size is " << gpuMatches.size() << endl;
@@ -131,11 +131,12 @@ public:
             }
         }
         if (same) {
-            cout << name << " Code ran fine in "<< (clock() - timer) / (CLOCKS_PER_SEC / 1000) << " ms"<< endl;
+            cout << name << " Code ran fine in "<< timer / (CLOCKS_PER_SEC / 1000) << " ms"<< endl;
         }
         else {
             cout << "Results doesn't match, debug your code" << endl;
         }
+        WriteMatches(gpuMatches, "/content/NIDS-main/outputfiles/Actual(" + name +").txt");
     }
 
 }test;

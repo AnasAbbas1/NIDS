@@ -22,7 +22,7 @@ CachingDeviceAllocator g_allocator(true);
 #define ull unsigned long long
 const ull h_q = 65521;
 const int h_p = 1024;
-const ull h_n = 1 << 24;
+const ull h_n = 1 << 20;
 const ull h_m = 13;
 const ull h_mps[] = {7, 31, 127, 8191, 131071, 524287};
 const int h_masksz = 6;
@@ -33,7 +33,7 @@ const ull h_HTSZ = 1 << 18;
 const int h_d = 2;
 __constant__ const int d_d = 2;
 __constant__ const ull d_q = 65521;
-__constant__ const ull d_n = 1 << 24;
+__constant__ const ull d_n = 1 << 20;
 __constant__  const int d_p = 1024;
 __constant__ const ull d_m = 13;
 __constant__ const ull d_mps[] = {7, 31, 127, 8191, 131071, 524287};
