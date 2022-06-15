@@ -131,7 +131,7 @@ public:
             }
         }
         if (same) {
-            cout << name << " Code ran fine in "<< (clock() - timer) / CLOCKS_PER_SEC << " seconds"<< endl;
+            cout << name << " Code ran fine in "<< (clock() - timer) / (CLOCKS_PER_SEC / 1000) << " ms"<< endl;
         }
         else {
             cout << "Results doesn't match, debug your code" << endl;

@@ -76,6 +76,7 @@ private:
         cudaFree(d_controlArray);
         cudaFree(d_hashTable);
         cudaFree(d_patternHashes);
+        cudaDeviceSynchronize();
         return h_output;
     }
 public:

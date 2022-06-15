@@ -63,6 +63,7 @@ private:
         cudaFree(d_lookupTable);
         cudaFree(d_controlArray);
         cudaFree(d_hashTable);
+        cudaDeviceSynchronize();
         return h_output;
     }
 public:
