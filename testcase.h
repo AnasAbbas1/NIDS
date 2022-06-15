@@ -17,14 +17,14 @@ private:
     }
     void WriteData(char* data) {
         ofstream myfile;
-        myfile.open("/content/NIDS-main/outputfiles/data.txt");
+        myfile.open("data.txt");
         myfile << string(data);
         myfile.close();
     }
     void WritePatterns(char * patterns) {
         set<string>st;
         ofstream myfile;
-        myfile.open("/content/NIDS-main/outputfiles/patterns.txt");
+        myfile.open("patterns.txt");
         for (int patternIndex = 0; patternIndex < h_p; patternIndex++) {
             string pattern = "";
             for (int i = patternIndex * h_m; i < patternIndex * h_m + h_m; i++)
@@ -39,7 +39,7 @@ private:
     }
     void WriteMatches(vector<pair<int, int>> matches, string fileName) {
         ofstream myfile;
-        myfile.open(fileName.c_str());
+        myfile.open((output_path + fileName).c_str());
         sort(matches.begin(), matches.end());
         myfile << "Row#\tPattern Index\tposition" << endl;
         for (int i = 0; i < matches.size(); i++) {
@@ -92,7 +92,7 @@ public:
         WriteData(g_h_data);
         WritePatterns(g_h_patterns);
         SolveOnCPU();
-        WriteMatches(expectedMatches, "/content/NIDS-main/outputfiles/Expected.txt");
+        WriteMatches(expectedMatches, "Expected.txt");
     }
     static void CopyDataToDevice(){
         CubDebugExit(g_allocator.DeviceAllocate((void**)&g_d_data, sizeof(char) * h_n));
@@ -135,7 +135,7 @@ public:
         else {
             cout << "Results doesn't match, debug your code" << endl;
         }
-        WriteMatches(gpuMatches, "/content/NIDS-main/outputfiles/Actual(" + name +").txt");
+        WriteMatches(gpuMatches, "Actual(" + name +").txt");
     }
 
 }test;
