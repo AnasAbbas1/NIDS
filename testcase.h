@@ -1,4 +1,3 @@
-#include "constants.h"
 struct testcase {
 private:
     string input_str;

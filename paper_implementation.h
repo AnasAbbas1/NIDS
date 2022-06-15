@@ -1,5 +1,3 @@
-#include "constants.h"
-#include "kernels.h"
 class PaperImplementation{
 private:
     static int* Step1() {

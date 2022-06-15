@@ -1,5 +1,3 @@
-#include "constants.h"
-#include "kernels.h"
 class ProposedImplementation{
 private:
     static ull* Step1(){
