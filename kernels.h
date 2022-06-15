@@ -1,4 +1,3 @@
-#include "constants.h"
 struct CustomSum
 {
     CUB_RUNTIME_FUNCTION __host__ __device__ __forceinline__
