@@ -17,14 +17,14 @@ private:
     }
     void WriteData(char* data) {
         ofstream myfile;
-        myfile.open("data.txt");
+        myfile.open((output_path + "data.txt").c_str);
         myfile << string(data);
         myfile.close();
     }
     void WritePatterns(char * patterns) {
         set<string>st;
         ofstream myfile;
-        myfile.open("patterns.txt");
+        myfile.open((output_path + "patterns.txt").c_str);
         for (int patternIndex = 0; patternIndex < h_p; patternIndex++) {
             string pattern = "";
             for (int i = patternIndex * h_m; i < patternIndex * h_m + h_m; i++)
