@@ -17,14 +17,14 @@ private:
     }
     void WriteData(char* data) {
         ofstream myfile;
-        myfile.open("outputfiles\\data.txt");
+        myfile.open("outputfiles/data.txt");
         myfile << string(data);
         myfile.close();
     }
     void WritePatterns(char * patterns) {
         set<string>st;
         ofstream myfile;
-        myfile.open("outputfiles\\patterns.txt");
+        myfile.open("outputfiles/patterns.txt");
         for (int patternIndex = 0; patternIndex < h_p; patternIndex++) {
             string pattern = "";
             for (int i = patternIndex * h_m; i < patternIndex * h_m + h_m; i++)
@@ -92,16 +92,15 @@ public:
         WriteData(g_h_data);
         WritePatterns(g_h_patterns);
         SolveOnCPU();
-        WriteMatches(expectedMatches, "outputfiles\\Expected.txt");
+        WriteMatches(expectedMatches, "outputfiles/Expected.txt");
     }
     static void CopyDataToDevice(){
         CubDebugExit(g_allocator.DeviceAllocate((void**)&g_d_data, sizeof(char) * h_n));
         CubDebugExit(cudaMemcpy(g_d_data, g_h_data, sizeof(char) * h_n, cudaMemcpyHostToDevice));
         CubDebugExit(g_allocator.DeviceAllocate((void**)&g_d_patterns, sizeof(char) * h_p * h_m));
         CubDebugExit(cudaMemcpy(g_d_patterns, g_h_patterns, sizeof(char) * h_p * h_m, cudaMemcpyHostToDevice));
-        // debug
-        //delete[] g_h_patterns;
-        //delete[] g_h_data;
+        delete[] g_h_patterns;
+        delete[] g_h_data;
     }
     void Validate(int* h_output) {
         vector<pair<int, int>>gpuMatches;
@@ -111,7 +110,7 @@ public:
             }
         }
         sort(gpuMatches.begin(), gpuMatches.end());
-        WriteMatches(gpuMatches, "outputfiles\\Actual.txt");
+        WriteMatches(gpuMatches, "outputfiles/Actual.txt");
         bool same = true;
         if (gpuMatches.size() != expectedMatches.size()) {
             cout << "sizes are not equal expected size is " << expectedMatches.size() << " and actual size is " << gpuMatches.size() << endl;
