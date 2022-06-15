@@ -80,6 +80,7 @@ private:
     }
 public:
     static int* Execute() {
+        timer = clock();
         ull* d_lookupTable = Step1();
         static pair<pair<int*, int*>, ull*> p = Step2(g_d_patterns);
         ull* d_a = Step3(g_d_data, d_lookupTable);

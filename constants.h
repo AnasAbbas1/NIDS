@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <random>
+#include<ctime>
 
 using namespace std;
 using namespace std::chrono;
@@ -47,3 +48,4 @@ char* g_h_data;
 char* g_h_patterns;
 char* g_d_data;
 char* g_d_patterns;
+clock_t timer;
