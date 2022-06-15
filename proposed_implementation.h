@@ -84,18 +84,23 @@ public:
     static int* Execute() {
         timer[0] = clock();
         ull* d_lookupTable = Step1();
+        cout << "step is done " << endl;
         timer[0] = clock() - timer[0];
         timer[1] = clock();
         static pair<pair<int*, int*>, ull*> p = Step2(g_d_patterns);
+        cout << "step is done " << endl;
         timer[1] = clock() - timer[1];
         timer[2] = clock();
         ull* d_a = Step3(g_d_data, d_lookupTable);
+        cout << "step is done " << endl;
         timer[2] = clock() - timer[2];
         timer[3] = clock();
         ull* d_prefixSum = Step4(d_a);
+        cout << "step is done " << endl;
         timer[3] = clock() - timer[3];
         timer[4] = clock();
         int* h_output = Step5(d_prefixSum, d_lookupTable, p.first.first, p.first.second, p.second);
+        cout << "step is done " << endl;
         timer[4] = clock() - timer[4];
         return h_output;
     }
