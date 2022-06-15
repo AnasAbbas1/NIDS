@@ -87,6 +87,7 @@ public:
         timer[3] = clock() - timer[3];
         timer[4] = clock();
         //5.  For all j (0 ≤ j ≤ n − m), compute ( ˆaj+m−1 − aˆ j−1) · dm−n−j, which is equal to h(tjtj + 1 ... tj + m−1).If array control[h(tjtj + 1 ... tj + m−1)]  0 then compare the characters of text and pattern with Match(i, j).
+        cout <<"here" << endl;
         int* h_output = Step5(d_prefixSum, g_d_data, g_d_patterns, d_lookupTable, p.first, p.second);
         timer[4] = clock() - timer[4];
         return h_output;
