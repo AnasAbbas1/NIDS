@@ -5,6 +5,7 @@
 #include "testcase.h"
 int main(){
     testcase::CopyDataToDevice();
-    test.Validate(ProposedImplementation::Execute());
+    test.Validate(ProposedImplementation::Execute(), "proposed");
+    testcase::ClearDataFromDevice();
     return 0;
 }

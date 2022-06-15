@@ -102,7 +102,11 @@ public:
         delete[] g_h_patterns;
         delete[] g_h_data;
     }
-    void Validate(int* h_output) {
+    static void ClearDataFromDevice(){
+        cudaFree(g_d_data);
+        cudaFree(g_d_patterns);
+    }
+    void Validate(int* h_output, string name) {
         vector<pair<int, int>>gpuMatches;
         for (int i = 0; i < h_n; i++) {
             if (h_output[i] != -1) {
@@ -110,7 +114,7 @@ public:
             }
         }
         sort(gpuMatches.begin(), gpuMatches.end());
-        WriteMatches(gpuMatches, "outputfiles/Actual.txt");
+        WriteMatches(gpuMatches, "outputfiles/Actual(" + name +").txt");
         bool same = true;
         if (gpuMatches.size() != expectedMatches.size()) {
             cout << "sizes are not equal expected size is " << expectedMatches.size() << " and actual size is " << gpuMatches.size() << endl;

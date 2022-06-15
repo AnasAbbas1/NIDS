@@ -60,8 +60,6 @@ private:
         CubDebugExit(cudaMemcpy(h_output, d_output, sizeof(int) * h_n, cudaMemcpyDeviceToHost));
         cudaFree(d_output);
         cudaFree(d_prefixSum);
-        cudaFree(d_data);
-        cudaFree(d_patterns);
         cudaFree(d_lookupTable);
         cudaFree(d_controlArray);
         cudaFree(d_hashTable);
