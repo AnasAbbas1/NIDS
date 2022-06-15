@@ -130,7 +130,10 @@ public:
             }
         }
         if (same) {
-            cout << name << " Code ran fine in "<< timer / (CLOCKS_PER_SEC / 1000) << " ms"<< endl;
+            cout << name << " Code ran fine and output is as expected"<< endl;
+            for(int i = 0; i < 5; i++){
+                cout << "step #" << i + 1 << " : completed execution in " << timers[i] / (CLOCKS_PER_SEC / 1000000) << "us" << endl;
+            }
         }
         else {
             cout << "Results doesn't match, debug your code" << endl;
