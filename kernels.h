@@ -70,7 +70,7 @@ __global__ void CalculateHashesNew(ull* d_a, char* d_data, ull* d_lookupTable) {
 __global__ void FindMatches(int* d_prefixSum, char* d_data, char* d_patterns, int* d_lookupTable, int* d_controlArray, int* d_hashTable, int* d_output) {
     ull j = blockIdx.x * blockDim.x + threadIdx.x;
     if (j + d_m - 1 < d_n) {
-        int hash = ((((ull)(d_prefixSum[j + d_m - 1] - (j ? d_prefixSum[j - 1] : 0)) + d_q) % d_q) * (ull)d_lookupTable[(d_m + ((d_n - j + d_q - 2ll) / (d_q - 1ll)) * (d_q - 1ll) - d_n + j) % (d_q - 1ll)]) % d_q;
+        int hash = (ull)((((d_prefixSum[j + d_m - 1] - (j ? d_prefixSum[j - 1] : 0)) + d_q) % d_q) * (ull)d_lookupTable[(d_m + ((d_n - j + d_q - 2ll) / (d_q - 1ll)) * (d_q - 1ll) - d_n + j) % (d_q - 1ll)]) % d_q;
         while (d_controlArray[hash]) {
             int patternIndex = d_hashTable[hash];
             bool match = true;
