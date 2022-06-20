@@ -76,12 +76,14 @@ private:
             string pattern = "";
             for (int j = i * h_m; j < i * h_m + h_m; j++)
                 pattern += g_h_patterns[j];
+            pattern += '\0';
             umap[pattern] = i;
         } 
         for(int i = 0; i < h_n; i++){
-            string str;
+            string str = "";
             for (int j = i; j < i + h_m; j++)
                 str += g_h_data[j];
+            str += '\0';
             if(umap.find(str) != umap.end()){
                 expectedMatches.push_back({umap[str], i});
             }
