@@ -75,7 +75,7 @@ private:
         for (int i = 0; i < h_p; i++){
             string pattern = "";
             for (int j = i * h_m; j < i * h_m + h_m; j++)
-                pattern += g_h_patterns[i];
+                pattern += g_h_patterns[j];
             umap[pattern] = i;
         } 
         for(int i = 0; i < h_n; i++){
