@@ -20,7 +20,7 @@ struct CustomSumNew
     }
 }sumModMersennePrime;
 __global__ void CalculateHashPattern(char* d_patterns, int* d_controlArray, int* d_hashTable) {
-    int patternIndex = threadIdx.x, patternHash = 0;
+    int patternIndex = blockIdx.x * blockDim.x + threadIdx.x, patternHash = 0;
 
     for (int i = patternIndex * d_m; i < patternIndex * d_m + d_m; i++)
         patternHash = (patternHash * d_d + (d_patterns[i] - 'a' + 1)) % d_q;
@@ -31,7 +31,7 @@ __global__ void CalculateHashPattern(char* d_patterns, int* d_controlArray, int*
     d_hashTable[patternHash] = patternIndex;
 }
 __global__ void CalculateHashPatternNew(char* d_patterns, int* d_controlArray, int* d_hashTable, ull* d_patternHashes) {
-    int patternIndex = threadIdx.x;
+    int patternIndex = blockIdx.x * blockDim.x + threadIdx.x;
     ull patternHash = 0;
 
     for (int i = patternIndex * d_m; i < patternIndex * d_m + d_m; i++){

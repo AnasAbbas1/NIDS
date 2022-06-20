@@ -33,7 +33,7 @@ private:
         CubDebugExit(cudaMemcpy(d_controlArray, h_controlArray, sizeof(int) * h_HTSZ, cudaMemcpyHostToDevice));
         CubDebugExit(cudaMemcpy(d_hashTable, h_hashTable, sizeof(int) * h_HTSZ, cudaMemcpyHostToDevice));
         cudaDeviceSynchronize();
-        CalculateHashPatternNew <<< 1, h_p >>> (d_patterns, d_controlArray, d_hashTable, d_patternHashes);
+        CalculateHashPatternNew <<< h_p / 256, 256 >>> (d_patterns, d_controlArray, d_hashTable, d_patternHashes);
         delete[] h_hashTable;
         delete[] h_controlArray;
         cudaDeviceSynchronize();
