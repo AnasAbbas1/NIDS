@@ -88,10 +88,13 @@ private:
     }
 public:
     testcase() {
+        cout << "generated data' size is " << h_n / (1 << 20) << "MB, pattern probability is " << (h_p / (double)(1 << h_m)) * 100.0 << " %" << endl;
         GenerateInputData();
         WriteData(g_h_data);
         WritePatterns(g_h_patterns);
+        clock_t start = clock();
         SolveOnCPU();
+        cout << "total execution time on cpu is " << (clock() - start) / (CLOCKS_PER_SEC / 1e3) << "ms" << endl;
         WriteMatches(expectedMatches, "Expected.txt");
     }
     static void CopyDataToDevice(){
