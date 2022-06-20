@@ -85,7 +85,7 @@ private:
                 str += g_h_data[j];
             str += '\0';
             if(umap.find(str) != umap.end()){
-                expectedMatches.push_back({umap[str], i + 1});
+                expectedMatches.push_back({umap[str], i});
             }
         }
     }
