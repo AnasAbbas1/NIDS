@@ -71,6 +71,7 @@ private:
     }
     void SolveOnCPU() {
         unordered_map<string, int> umap;
+        set<pair<int, int> >st;
         input_str = string(g_h_data);
         for (int i = 0; i < h_p; i++){
             string pattern = "";
@@ -85,8 +86,12 @@ private:
                 str += g_h_data[j];
             str += '\0';
             if(umap.find(str) != umap.end()){
-                expectedMatches.push_back({umap[str], i});
+                st.insert({{umap[str], i}});
             }
+        }
+        while(st.size()){
+            expectedMatches.push_back(*st.begin());
+            st.erase(st.begin());
         }
     }
 public:
