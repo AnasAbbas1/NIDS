@@ -69,26 +69,27 @@ private:
         g_h_patterns = PatternsGeneration();
         g_d_patterns = NULL;
     }
-    void FindPattern(int patternIndex) {
-        string pattern = "";
-        for (int i = patternIndex * h_m; i < patternIndex * h_m + h_m; i++)
-            pattern += g_h_patterns[i];
-
-        size_t pos = input_str.find(pattern);
-        while (pos != string::npos) {
-            expectedMatches.push_back({ patternIndex, pos });
-            pos = input_str.find(pattern, pos + 1);
-        }
-
-    }
     void SolveOnCPU() {
+        unordered_map<string, int> umap;
         input_str = string(g_h_data);
-        for (int i = 0; i < h_p; i++) 
-            FindPattern(i);
+        for (int i = 0; i < h_p; i++){
+            string pattern = "";
+            for (int j = i * h_m; j < i * h_m + h_m; j++)
+                pattern += g_h_patterns[i];
+            umap[pattern] = i;
+        } 
+        for(int i = 0; i < h_n; i++){
+            string str;
+            for (int j = i; j < i + h_m; j++)
+                str += g_h_data[j];
+            if(umap.find(str) != umap.end()){
+                expectedMatches.push_back({umap[str], i});
+            }
+        }
     }
 public:
     testcase() {
-        cout << "generated data' size is " << h_n / (1 << 20) << "MB, pattern probability is " << (h_p / (double)(1 << h_m)) * 100.0 << " %" << endl;
+        cout << "generated data' size is " << h_n / (1 << 20) << "MB, expected to find  " << (h_p / (double)(1 << h_m)) * h_n << " pattern matches" << endl;
         GenerateInputData();
         WriteData(g_h_data);
         WritePatterns(g_h_patterns);

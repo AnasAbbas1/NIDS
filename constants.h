@@ -4,16 +4,17 @@
 #include "cub/device/device_scan.cuh"
 #include <stdio.h>
 #include <chrono>
-#include<iostream>
-#include<vector>
-#include<algorithm>
-#include<string>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
 #include <fstream>
-#include<set>
+#include <set>
 #include <stdlib.h>
 #include <time.h>
 #include <random>
-#include<ctime>
+#include <ctime>
+#include <unordered_map>
 
 using namespace std;
 using namespace std::chrono;
@@ -21,9 +22,9 @@ using namespace cub;
 CachingDeviceAllocator g_allocator(true);
 #define ull unsigned long long
 const ull h_q = 65521;
-const int h_p = 1 << 15;
-const ull h_n = 1 << 27;
-const ull h_m = 20;
+const int h_p = 1 << 10;
+const ull h_n = 1 << 20;
+const ull h_m = 10;
 const ull h_mps[] = {7, 31, 127, 8191, 131071, 524287};
 const int h_masksz = 6;
 const ull h_shifts[] = {3, 5, 7, 13, 17, 19};
