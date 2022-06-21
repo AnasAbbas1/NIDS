@@ -96,7 +96,7 @@ private:
     }
 public:
     testcase() {
-        cout << "generated data' size is " << h_n / (1 << 20) << "MB, expected to find  " << (h_p / (double)(1 << h_m)) * h_n << " pattern matches" << endl;
+        cout << "generated data' size is " << h_n / (1 << 20) << "MB" << endl;
         GenerateInputData();
         WriteData(g_h_data);
         WritePatterns(g_h_patterns);
