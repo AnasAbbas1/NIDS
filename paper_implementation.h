@@ -3,7 +3,7 @@ private:
     static int* Step1() {
         int* ret = NULL;
         int *h_lookupTabe = new int [h_q];
-        for (int i = 0, current = 1; i < h_q; i++, current = (current * h_d) % h_q ) 
+        for (int i = 0, current = 1; i < h_q; i++, current = (current * h_prime) % h_q ) 
             h_lookupTabe[i] = current;
         CubDebugExit(g_allocator.DeviceAllocate((void**)&ret, sizeof(int) * h_q));
         CubDebugExit(cudaMemcpy(ret, h_lookupTabe, sizeof(int) * h_q, cudaMemcpyHostToDevice));

@@ -23,7 +23,7 @@ __global__ void CalculateHashPattern(char* d_patterns, int* d_controlArray, int*
     int patternIndex = blockIdx.x * blockDim.x + threadIdx.x, patternHash = 0;
 
     for (int i = patternIndex * d_m; i < patternIndex * d_m + d_m; i++)
-        patternHash = (patternHash * d_d + (d_patterns[i] - 'a' + 1)) % d_q;
+        patternHash = (patternHash * d_prime + (d_patterns[i] - 'a' + 1)) % d_q;
 
     while (atomicAdd(&d_controlArray[patternHash], 1) != 0)
         patternHash = (patternHash + 1) % d_q;
