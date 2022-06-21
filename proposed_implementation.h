@@ -85,7 +85,7 @@ public:
         timer[idx][0] = clock();
         ull* d_lookupTable = Step1();
         timer[idx][0] = clock() - timer[idx][0];
-        timer[[idx]1] = clock();
+        timer[idx]1] = clock();
         static pair<pair<int*, int*>, ull*> p = Step2(g_d_patterns);
         timer[idx][1] = clock() - timer[idx][1];
         timer[idx][2] = clock();
