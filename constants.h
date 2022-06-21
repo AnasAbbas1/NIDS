@@ -24,7 +24,7 @@ CachingDeviceAllocator g_allocator(true);
 const int primes[] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31};
 const ull h_q = 65521;
 const int h_p = 1;
-const ull h_n = 1 << 25;
+const ull h_n = 1 << 29;
 const ull h_m = 1000;
 const ull h_mps[] = {7, 31, 127, 8191, 131071, 524287};
 const int h_masksz = 6;
