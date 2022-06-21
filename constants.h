@@ -51,5 +51,5 @@ char* g_h_data;
 char* g_h_patterns;
 char* g_d_data;
 char* g_d_patterns;
-clock_t timer[5];
+clock_t timer[2][5];
 const string output_path = "/content/NIDS-stress_test/outputfiles/";

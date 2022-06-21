@@ -103,7 +103,7 @@ public:
         clock_t start = clock();
         SolveOnCPU();
         cout << "total execution time on cpu is " << (clock() - start) / (CLOCKS_PER_SEC / 1e3) << "ms" << endl;
-        WriteMatches(expectedMatches, "Expected.txt");
+        //WriteMatches(expectedMatches, "Expected.txt");
     }
     static void CopyDataToDevice(){
         CubDebugExit(g_allocator.DeviceAllocate((void**)&g_d_data, sizeof(char) * h_n));
@@ -117,7 +117,7 @@ public:
         cudaFree(g_d_data);
         cudaFree(g_d_patterns);
     }
-    void Validate(int* h_output, string name) {
+    void Validate(int* h_output, string name, int idx) {
         vector<pair<int, int>>gpuMatches;
         for (int i = 0; i < h_n; i++) {
             if (h_output[i] != -1) {
@@ -144,15 +144,15 @@ public:
             cout << name << " Code ran fine and output is as expected"<< endl;
             clock_t sum = 0;
             for(int i = 0; i < 5; i++){
-                cout << "step #" << i + 1 << " : completed execution in " << timer[i] / (CLOCKS_PER_SEC / 1e6) << "us" << endl;
-                sum += timer[i];
+                cout << "step #" << i + 1 << " : completed execution in " << timer[idx][i] / (CLOCKS_PER_SEC / 1e6) << "us" << endl;
+                sum += timer[idx][i];
             }
             cout << "total execution time is " << sum / (CLOCKS_PER_SEC / 1e3) << "ms" << endl;
         }
         else {
             cout << "Results doesn't match, debug your code" << endl;
         }
-        WriteMatches(gpuMatches, "Actual(" + name +").txt");
+        //WriteMatches(gpuMatches, "Actual(" + name +").txt");
     }
 
 }test;
