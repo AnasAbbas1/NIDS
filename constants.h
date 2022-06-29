@@ -50,4 +50,4 @@ char* g_h_patterns;
 char* g_d_data;
 char* g_d_patterns;
 clock_t timer[5];
-const string output_path = "/content/NIDS-main/outputfiles/";
+const string output_path = "/content/NIDS-main-fast/outputfiles/";
