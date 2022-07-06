@@ -2,9 +2,9 @@ class ProposedImplementation{
 private:
     static ull* Step1(){
         ull* ret = NULL;
-        ull* h_lookupTabe = new ull [h_mps[5]];
-        ull currents[] = {1, 1, 1, 1, 1, 1};
-        for(int i = 0; i < h_mps[5]; i++){
+        ull* h_lookupTabe = new ull [h_mps[2]];
+        ull currents[] = {1, 1, 1};
+        for(int i = 0; i < h_mps[2]; i++){
             h_lookupTabe[i] = 0;
             for(int j = 0; j <h_masksz; j++){
                 h_lookupTabe[i] |= currents[j] << h_cumShifts[j];
@@ -14,8 +14,8 @@ private:
             }
             
         }    
-        CubDebugExit(g_allocator.DeviceAllocate((void**)&ret, sizeof(ull) * h_mps[5]));
-        CubDebugExit(cudaMemcpy(ret, h_lookupTabe, sizeof(ull) * h_mps[5], cudaMemcpyHostToDevice));
+        CubDebugExit(g_allocator.DeviceAllocate((void**)&ret, sizeof(ull) * h_mps[2]));
+        CubDebugExit(cudaMemcpy(ret, h_lookupTabe, sizeof(ull) * h_mps[2], cudaMemcpyHostToDevice));
         delete[] h_lookupTabe;
         cudaDeviceSynchronize();
         return ret;
