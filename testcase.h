@@ -94,6 +94,7 @@ private:
         }
         for(int i = 0; i <= h_n - h_m; i++){
             int curHash = (hashes[i + h_m - 1] - (i ? hashes[i - 1] : 0) + h_q) % h_q;
+            curHash *= d_lookupTable[(h_m + ((h_n - i + h_q - 2ll) / (h_q - 1ll)) * (h_q - 1ll) - h_n + i) % (h_q - 1ll)];
             if(HashExist[curHash]){
                 string str = "";
                 for (int j = i; j < i + h_m; j++)
