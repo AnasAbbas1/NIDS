@@ -74,8 +74,15 @@ private:
         unordered_map<int, bool> HashExist;
         set<pair<int, int> >st;
         int *hashes = new int [h_n];
-        for(int i = 0; i < h_n; i++)
-            hashes[i] = ((i ? hashes[i - 1] * h_d : 0) + g_h_data[i] - 'a' + 1) % h_q;
+        long long *lookupTable = new long long [h_q];
+        for (int i = 0, current = 1; i < h_q; i++, current = (current * h_d) % h_q ) 
+            lookupTable[i] = current;
+        
+        for(int i = 0; i < h_n; i++){
+            hashes[i] = (lookupTable[(h_n - i - 1) % (h_q - 1)] * (g_h_data[i] - 'a' + 1)) % h_q;
+            if(i)
+                hashes[i] = (hashes[i] + hashes[i - 1]) % h_q;
+        }
         
         for (int i = 0; i < h_p; i++){
             string pattern = "";
@@ -88,9 +95,8 @@ private:
             patIndex[pattern] = i;
             HashExist[patternHash] = true; 
         }
-        long long *lookupTable = new long long [h_q];
-        for (int i = 0, current = 1; i < h_q; i++, current = (current * h_d) % h_q ) 
-            lookupTable[i] = current;
+
+
 
         for(int i = 0; i <= h_n - h_m; i++){
             long long curHash = (hashes[i + h_m - 1] - (i ? hashes[i - 1] : 0) + h_q) % h_q;
