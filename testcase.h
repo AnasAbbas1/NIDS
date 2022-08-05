@@ -79,21 +79,21 @@ private:
             lookupTabel[i] = current;
         
         for(int i = 0; i < h_n; i++)
-            hashes[i] = (( i == 0 ? 0 : hashes[i - 1]) + (g_h_data[i] - 'a' + 1) * lookupTabel[i]) % h_q;
+            hashes[i] = (( i ? hashes[i - 1] : 0) + (g_h_data[i] - 'a' + 1) * lookupTabel[i]) % h_q;
         
         for (int i = 0; i < h_p; i++){
             string pattern = "";
             int patternHash = 0;
             for (int j = i * h_m; j < i * h_m + h_m; j++){
                 pattern += g_h_patterns[j];
-                patternHash = (patternHash * h_d + (g_h_patterns[j] - 'a' + 1)) % h_q;
+                patternHash = (patternHash + (g_h_patterns[j] - 'a' + 1) * lookupTabel[j % h_m]) % h_q;
             }
             pattern += '\0';
             patIndex[pattern] = i;
             HashExist[patternHash] = true; 
         }
-        for(int i = h_m - 1; i < h_n; i++){
-            int curHash = (hashes[i] - (i >= h_m ? hashes[i - h_m] : 0) + h_q ) % h_q;
+        for(int i = 0; i <= h_n - h_m; i++){
+            int curHash = (hashes[i + h_m - 1] - (i ? hashes[i - 1] : 0) + h_q) % h_q;
             if(HashExist[curHash]){
                 string str = "";
                 for (int j = i; j < i + h_m; j++)
