@@ -73,20 +73,20 @@ private:
         unordered_map<string, int> patIndex;
         unordered_map<int, bool> HashExist;
         set<pair<int, int> >st;
-        int *lookupTabel = new int [h_n];
+        int *lookupTable = new int [h_n];
         int *hashes = new int [h_n];
         for (int i = 0, current = 1; i < h_n; i++, current = (current * h_d) % h_q ) 
-            lookupTabel[i] = current;
+            lookupTable[i] = current;
         
         for(int i = 0; i < h_n; i++)
-            hashes[i] = (( i ? hashes[i - 1] : 0) + (g_h_data[i] - 'a' + 1) * lookupTabel[i]) % h_q;
+            hashes[i] = (( i ? hashes[i - 1] : 0) + (g_h_data[i] - 'a' + 1) * lookupTable[i]) % h_q;
         
         for (int i = 0; i < h_p; i++){
             string pattern = "";
             int patternHash = 0;
             for (int j = i * h_m; j < i * h_m + h_m; j++){
                 pattern += g_h_patterns[j];
-                patternHash = (patternHash + (g_h_patterns[j] - 'a' + 1) * lookupTabel[j % h_m]) % h_q;
+                patternHash = (patternHash + (g_h_patterns[j] - 'a' + 1) * lookupTable[j % h_m]) % h_q;
             }
             pattern += '\0';
             patIndex[pattern] = i;
