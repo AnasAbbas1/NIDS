@@ -23,7 +23,7 @@ CachingDeviceAllocator g_allocator(true);
 #define ull unsigned long long
 const ull h_q = 65521;
 const int h_p = 1 << 15;
-const ull h_n = 1 << 29;
+const ull h_n = 1 << 25;
 const ull h_m = 17;
 const ull h_mps[] = {7, 31, 127, 8191, 131071, 524287};
 const int h_masksz = 6;
@@ -50,4 +50,4 @@ char* g_h_patterns;
 char* g_d_data;
 char* g_d_patterns;
 clock_t timer[5];
-const string output_path = "/content/NIDS-main/outputfiles/";
+const string output_path = "/content/NIDS-serial-rabin-karp/outputfiles/";

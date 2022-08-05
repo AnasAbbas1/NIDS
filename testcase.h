@@ -69,24 +69,39 @@ private:
         g_h_patterns = PatternsGeneration();
         g_d_patterns = NULL;
     }
-    void SolveOnCPU() {
-        unordered_map<string, int> umap;
+    void SerialRabinKarp(){
+        unordered_map<string, int> patIndex;
+        unordered_map<int, bool> HashExist;
         set<pair<int, int> >st;
-        input_str = string(g_h_data);
+        int *lookupTabel = new int [h_n];
+        int *hashes = new int [h_n];
+        for (int i = 0, current = 1; i < h_n; i++, current = (current * h_d) % h_q ) 
+            lookupTabel[i] = current;
+        
+        for(int i = 0; i < h_n; i++)
+            hashes[i] = (( i == 0 ? 0 : hashes[i - 1]) + (g_h_data[i] - 'a' + 1) * lookupTabel[i]) % h_q;
+        
         for (int i = 0; i < h_p; i++){
             string pattern = "";
-            for (int j = i * h_m; j < i * h_m + h_m; j++)
+            int patternHash = 0;
+            for (int j = i * h_m; j < i * h_m + h_m; j++){
                 pattern += g_h_patterns[j];
+                patternHash = (patternHash * h_d + (g_h_patterns[j] - 'a' + 1)) % h_q;
+            }
             pattern += '\0';
-            umap[pattern] = i;
-        } 
-        for(int i = 0; i < h_n; i++){
-            string str = "";
-            for (int j = i; j < i + h_m; j++)
-                str += g_h_data[j];
-            str += '\0';
-            if(umap.find(str) != umap.end()){
-                st.insert({{umap[str], i}});
+            patIndex[pattern] = i;
+            HashExist[patternHash] = true; 
+        }
+        for(int i = h_m - 1; i < h_n; i++){
+            int curHash = (hashes[i] - (i >= h_m ? hashes[i - h_m] : 0) + h_q ) % h_q;
+            if(HashExist[curHash]){
+                string str = "";
+                for (int j = i; j < i + h_m; j++)
+                    str += g_h_data[j];
+                str += '\0';
+                if(patIndex.find(str) != patIndex.end()){
+                    st.insert({{patIndex[str], i}});
+                }
             }
         }
         while(st.size()){
@@ -101,7 +116,7 @@ public:
         WriteData(g_h_data);
         WritePatterns(g_h_patterns);
         clock_t start = clock();
-        SolveOnCPU();
+        SerialRabinKarp();
         cout << "total execution time on cpu is " << (clock() - start) / (CLOCKS_PER_SEC / 1e3) << "ms" << endl;
         WriteMatches(expectedMatches, "Expected.txt");
     }
